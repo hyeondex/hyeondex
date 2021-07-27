@@ -1,78 +1,94 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>JS Drum Kit</title>
-  <link rel="stylesheet" href="style.css">
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="stylesheet" href="css/style.css">
+    <title>Document</title>
 </head>
 <body>
+    <div class="keys">
+        <div data-key="65" class="key">
+            <kbd>A</kbd>
+            <span class="sound">clap</span>
+        </div>
+        <div data-key="83" class="key">
+            <kbd>S</kbd>
+            <span class="sound">hihat</span>
+        </div>
+        <div data-key="68" class="key">
+            <kbd>D</kbd>
+            <span class="sound">kick</span>
+        </div>
+        <div data-key="70" class="key">
+            <kbd>F</kbd>
+            <span class="sound">openhat</span>
+        </div>
+        <div data-key="71" class="key">
+            <kbd>G</kbd>
+            <span class="sound">boom</span>
+        </div>
+        <div data-key="72" class="key">
+            <kbd>H</kbd>
+            <span class="sound">ride</span>
+        </div>
+        <div data-key="74" class="key">
+            <kbd>K</kbd>
+            <span class="sound">tom</span>
+        </div>
+        <div data-key="76" class="key">
+            <kbd>L</kbd>
+            <span class="sound">tink</span>
+        </div>
+    </div>
 
-  <div class="keys">
-    <div data-key="65" class="key">
-      <kbd>A</kbd>
-      <span class="sound">clap</span>
-    </div>
-    <div data-key="83" class="key">
-      <kbd>S</kbd>
-      <span class="sound">hihat</span>
-    </div>
-    <div data-key="68" class="key">
-      <kbd>D</kbd>
-      <span class="sound">kick</span>
-    </div>
-    <div data-key="70" class="key">
-      <kbd>F</kbd>
-      <span class="sound">openhat</span>
-    </div>
-    <div data-key="71" class="key">
-      <kbd>G</kbd>
-      <span class="sound">boom</span>
-    </div>
-    <div data-key="72" class="key">
-      <kbd>H</kbd>
-      <span class="sound">ride</span>
-    </div>
-    <div data-key="74" class="key">
-      <kbd>J</kbd>
-      <span class="sound">snare</span>
-    </div>
-    <div data-key="75" class="key">
-      <kbd>K</kbd>
-      <span class="sound">tom</span>
-    </div>
-    <div data-key="76" class="key">
-      <kbd>L</kbd>
-      <span class="sound">tink</span>
-    </div>
-  </div>
+    <audio data-key="65" src="sounds/clap.wav"></audio>
+    <audio data-key="83" src="sounds/hihat.wav"></audio>
+    <audio data-key="68" src="sounds/kick.wav"></audio>
+    <audio data-key="70" src="sounds/openhat.wav"></audio>
+    <audio data-key="71" src="sounds/boom.wav"></audio>
+    <audio data-key="72" src="sounds/ride.wav"></audio>
+    <audio data-key="74" src="sounds/tom.wav"></audio>
+    <audio data-key="76" src="sounds/tink.wav"></audio>
 
-  <audio data-key="65" src="sounds/clap.wav"></audio>
-  <audio data-key="83" src="sounds/hihat.wav"></audio>
-  <audio data-key="68" src="sounds/kick.wav"></audio>
-  <audio data-key="70" src="sounds/openhat.wav"></audio>
-  <audio data-key="71" src="sounds/boom.wav"></audio>
-  <audio data-key="72" src="sounds/ride.wav"></audio>
-  <audio data-key="74" src="sounds/snare.wav"></audio>
-  <audio data-key="75" src="sounds/tom.wav"></audio>
-  <audio data-key="76" src="sounds/tink.wav"></audio>
+    <script>
 
-<script>
-    window.addEventListener('keydown', function(e){
-        //console.log(e);//이벤트 확인 
-        //console.log(e.keyCode); //data-key에 들어가는 keyCode
-        const audio = document.querySelector('audio[data-key="${e.keyCode}"]');
-        const key = document.querySelector('.key[data-key="${e.keyCode}"]');
-        //console.log(audio); // 여기서 부터 NULL값뜨는데 이유가 뭔지 모르겠음 
+        function playSound(e){
+            /*console.log(e);
+           console.log(e.keyCode);*/
+            const audio = document.querySelector(`audio[data-key="${e.keyCode}"]`);
+            const key = document.querySelector(`.key[data-key="${e.keyCode}"]`);
+            //console.log(key); //잘 나오는지 확인하기
 
-        if(!audio) return; // 오디오가 아니라면 리턴
-        //audio.currentTime = 0;
-        audio.play();
-     
-        console.log(key);
-    })
-</script>
+            if(!audio) return // 오디오가 아닌 경우 return;
+            audio.currentTime = 0; // currentTime html에서 audio나 video를 재생할 때 재생시간위치를 정함
+            audio.play();
+            /*key.classList.add('playing');
+            key.classList.remove('playing');*/
+            //key.classList.toggle('playing');
+            key.classList.add('playing');
+            //.key.playing add
+
+        }
+
+        function  removeTransition(e){
+            //console.log(e);  //>> propertyName을 확인하는 것,,,? 이건 설명을 더 찾아봐야겠다.?????
+            if(e.propertyName !== 'transform') return;
+            //console.log(this); //받는 this가 뭔지 확인가히
+            this.classList.remove('playing');
+        };
+
+        //nodeList는 배열이 아니래
+        const keys = document.querySelectorAll(`.key`);
+        //addEventListener 지정한 이벤트가 대상에 전달될때 마다 호출할 함수를 설정한다.
+        keys.forEach(key => key.addEventListener('transitionend', removeTransition));
+        //forEach 배열에 활용함
+        //=> 화살표함수 key에 key의 이벤트 리스너 실행 된 것을 담는 것
 
 
+        window.addEventListener("keydown",playSound);
+    </script>
 </body>
 </html>
- 
